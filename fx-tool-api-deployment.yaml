@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intesa-fx-platform-api
+  namespace: myapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intesa-fx-platform-api
+  template:
+    metadata:
+      labels:
+        app: intesa-fx-platform-api
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: intesa-fx-platform-api
+          image: 209387749174.dkr.ecr.eu-central-1.amazonaws.com/fx-tool-intesa/intesa-fx-platform-api:0.0.13-beta
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ASPNETCORE_ENVIRONMENT
+              value: "Production"
+            - name: ASPNETCORE_HTTP_PORTS
+              value: "8080"
+          resources:
+            requests:
+              cpu: "200m"
+              memory: "256Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8080
+            initialDelaySeconds: 20
+            periodSeconds: 20
