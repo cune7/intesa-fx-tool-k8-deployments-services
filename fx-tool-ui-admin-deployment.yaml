@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intesa-fx-platform-ui-admin
+  namespace: fx-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intesa-fx-platform-ui-admin
+  template:
+    metadata:
+      labels:
+        app: intesa-fx-platform-ui-admin
+    spec:
+      imagePullSecrets:
+        - name: regcred
+      containers:
+        - name: intesa-fx-platform-ui-admin
+          image: 209387749174.dkr.ecr.eu-central-1.amazonaws.com/fx-tool-intesa/intesa-fx-platform-ui-admin:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 15
+            periodSeconds: 20
