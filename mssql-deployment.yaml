@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intesa-fx-sqlserver
+  namespace: fx-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intesa-fx-sqlserver
+  template:
+    metadata:
+      labels:
+        app: intesa-fx-sqlserver
+    spec:
+      containers:
+        - name: intesa-fx-sqlserver
+          image: mcr.microsoft.com/mssql/server:2022-latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 1433
+          env:
+            - name: ACCEPT_EULA
+              value: "Y"
+            - name: MSSQL_PID
+              value: "Developer"
+            - name: SA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: intesa-fx-sqlserver-secret
+                  key: SA_PASSWORD
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "1Gi"
+            limits:
+              cpu: "1"
+              memory: "2Gi"
+          volumeMounts:
+            - name: sqlserver-storage
+              mountPath: /var/opt/mssql
+      volumes:
+        - name: sqlserver-storage
+          persistentVolumeClaim:
+            claimName: intesa-fx-sqlserver-pvc
