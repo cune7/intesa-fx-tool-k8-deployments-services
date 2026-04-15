@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intesa-fx-papercut-smtp
+  namespace: fx-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intesa-fx-papercut-smtp
+  template:
+    metadata:
+      labels:
+        app: intesa-fx-papercut-smtp
+    spec:
+      containers:
+        - name: intesa-fx-papercut-smtp
+          image: changemakerstudiosus/papercut-smtp:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+            - containerPort: 2525
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+          readinessProbe:
+            tcpSocket:
+              port: 2525
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            tcpSocket:
+              port: 2525
+            initialDelaySeconds: 15
+            periodSeconds: 20
