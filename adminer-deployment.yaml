@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: intesa-fx-adminer
+  namespace: fx-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: intesa-fx-adminer
+  template:
+    metadata:
+      labels:
+        app: intesa-fx-adminer
+    spec:
+      containers:
+        - name: intesa-fx-adminer
+          image: adminer:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          env:
+            - name: ADMINER_DEFAULT_SERVER
+              value: "intesa-fx-sqlserver"
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "300m"
+              memory: "256Mi"
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 20
