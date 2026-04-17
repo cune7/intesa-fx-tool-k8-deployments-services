@@ -17,7 +17,7 @@ spec:
         - name: regcred
       containers:
         - name: intesa-fx-platform-api
-          image: 209387749174.dkr.ecr.eu-central-1.amazonaws.com/fx-tool-intesa/intesa-fx-platform-api:0.0.13-beta
+          image: 209387749174.dkr.ecr.eu-central-1.amazonaws.com/fx-tool-intesa/intesa-fx-platform-api:0.0.64-beta
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8080
